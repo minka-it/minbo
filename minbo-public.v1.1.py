@@ -9,7 +9,7 @@ from py_expression_eval import Parser
 import telebot, os, aiml
 
 
-bot = telebot.TeleBot("199003804:AAF25w4_hUTmvQ3zWfhk27sktqUc4xcrwW4")
+bot = telebot.TeleBot("TOKEN")
 parser = Parser()
 
 # Cargar el kernel, setear valores y aprender conocimiento
