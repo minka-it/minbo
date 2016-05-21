@@ -6,12 +6,27 @@ BotName: minbo
 '''
 
 from py_expression_eval import Parser
-import telebot
-import os
+import telebot, os, aiml
 
 
-bot = telebot.TeleBot("AQUI VA EL TOKEN")
+bot = telebot.TeleBot("199003804:AAF25w4_hUTmvQ3zWfhk27sktqUc4xcrwW4")
 parser = Parser()
+
+# Cargar el kernel, setear valores y aprender conocimiento
+kernel = aiml.Kernel()
+kernel.setBotPredicate('name', 'Minbo')
+kernel.setBotPredicate('nombre_bot', 'Minbo')
+kernel.setBotPredicate('master', 'Ramiro Martinez')
+kernel.setBotPredicate('botmaster', 'Ramiro')
+kernel.setBotPredicate('ciudad', 'San Salvador de Jujuy')
+kernel.setBotPredicate('edad', '1')
+kernel.learn("aiml/sara/sara_srai_1.aiml")
+kernel.learn("aiml/sara/sara_srai_2.aiml")
+kernel.learn("aiml/sara/nombres.aiml")
+kernel.learn("aiml/sara/default.aiml")
+kernel.learn("aiml/sara/numeros.aiml")
+kernel.learn("aiml/sara/sexo.aiml")
+kernel.learn("aiml/sara/sara.aiml")
 
 text_messages = {
     'bienvenido':
@@ -33,26 +48,34 @@ text_messages = {
         'Operaciones disponibles, constantes y funciones\n'
         '\n'
         'Expression Ejemplo                                 Salida\n'
-        "+          parser.parse('2 + 2').evaluate({})      4.0\n"
-        "-          parser.parse('3 - 1').evaluate({})      2.0\n"
-        "*          parser.parse('2 * 3').evaluate({})      6.0\n"
-        "/          parser.parse('5 / 2').evaluate({})      2.5\n"
-        "%          parser.parse('5 % 2').evaluate({})      1.0\n"
-        "^          parser.parse('5 ^ 2').evaluate({})      25.0\n"
-        "PI         parser.parse('PI').evaluate({})         3.141592653589793\n"
-        "E          parser.parse('E').evaluate({})          2.718281828459045\n"
-        "sin(x)     parser.parse('sin(0)').evaluate({})     0.0\n"
-        "cos(x)     parser.parse('cos(PI)').evaluate({})    - 1.0\n"
-        "tan(x)     parser.parse('tan(0)').evaluate({})     0.0\n"
-        "asin(x)    parser.parse('asin(0)').evaluate({})    0.0\n"
-        "acos(x)    parser.parse('acos(-1)').evaluate({})   3.141592653589793\n"
-        "atan(x)    parser.parse('atan(PI)').evaluate({})   1.2626272556789118\n"
-        "log(x)     parser.parse('log(1)').evaluate({})     0.0\n"
-        "abs(x)     parser.parse('abs(-1)').evaluate({})    1.0\n"
-        "ceil(x)    parser.parse('ceil(2.7)').evaluate({})  3.0\n"
-        "floor(x)   parser.parse('floor(2.7)').evaluate({}) 2.0\n"
-        "round(x)   parser.parse('round(2.7)').evaluate({}) 3.0\n"
-        "exp(x)     parser.parse('exp(2)').evaluate({})     7.38905609893065\n",
+        "+           2 + 2       4.0\n"
+        "-           3 - 1       2.0\n"
+        "*           2 * 3       6.0\n"
+        "/           5 / 2       2.5\n"
+        "%           5 % 2       1.0\n"
+        "^           5 ^ 2       25.0\n"
+        "PI          PI          3.141592653589793\n"
+        "E           E           2.718281828459045\n"
+        "sin(x)      sin(0)      0.0\n"
+        "cos(x)      cos(PI)     - 1.0\n"
+        "tan(x)      tan(0)      0.0\n"
+        "asin(x)     asin(0)     0.0\n"
+        "acos(x)     acos(-1)    3.141592653589793\n"
+        "atan(x)     atan(PI)    1.2626272556789118\n"
+        "log(x)      log(1)      0.0\n"
+        "abs(x)      abs(-1)     1.0\n"
+        "ceil(x)     ceil(2.7)   3.0\n"
+        "floor(x)    floor(2.7)  2.0\n"
+        "round(x)    round(2.7)  3.0\n"
+        "exp(x)      exp(2)      7.38905609893065\n",
+
+
+    'help_chat':
+        'Puedes hablar conmigo si estas aburrid@.\n'
+        'Soy un Chaterbot basado en la base de conocimiento de SARA.\n'
+        'Estoy implementado gracias a pyaiml.\n'
+        'Mi creador es Ramiro Martinez y la comunidad Minka-IT.\n'
+        'Proximamente mi creador me dotara de capacidad de aprendizaje en tiempo real.',
 
     'wrong_chat':
         'Hubo un error'
@@ -121,18 +144,32 @@ def send_documentos(message):
 @bot.message_handler(commands=['calc'])
 def calc(message):
     chat_id = message.chat.id
-    param = message.text.split(' ',1) #separa el comando de los parametros
-    try:    
-        #bot.send_message(chat_id, ast.literal_eval(param[1]))
-        print "calc handler sucess: " + param[1]
-        bot.send_message(chat_id,parser.parse(param[1]).evaluate({}))
-    except Exception as e:
-        bot.send_message(chat_id, "¡¡No podes calcular eso!!")
-        print "calc handler error: " + str(e) + ": " + param[1]
+    param = message.text.split(' ',1) #separa el comando de los parametros  
+    if len(param) == 1 or param[1]=="help":
+        bot.send_message(chat_id,text_messages['help_calc'])
+    else:
+        try:    
+            #bot.send_message(chat_id, ast.literal_eval(param[1]))
+            bot.send_message(chat_id,parser.parse(param[1]).evaluate({}))
+            print "calc handler sucess: " + param[1]
+        except Exception as e:
+            bot.send_message(chat_id, "¡¡No podes calcular eso!!")
+            print "calc handler error: " + str(e) + ": " + param[1]
 
-@bot.message_handler(commands=['help_calc'])
-def helpcalc(message):
+@bot.message_handler(commands=['chat','minbo'])
+def chat(message):
     chat_id = message.chat.id
-    bot.send_message(chat_id,text_messages['help_calc'])
+    param = message.text.split(' ',1) #separa el comando de los parametros
+    if len(param) == 1 or param[1]=="help":
+        bot.send_message(chat_id,text_messages['help_chat'])
+    else:
+        try:
+            print "chat humano: " + param[1]
+            respuesta=kernel.respond(param[1])
+            print "chat robot: " + respuesta
+            bot.send_message(chat_id,respuesta)
+        except Exception, e:
+            print e
+            bot.send_message(chat_id,"Tengo un bug en mi estomago!")
 
 bot.polling(none_stop=True)       # Iniciamos nuestro bot para que esté atento a los mensajes
