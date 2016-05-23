@@ -6,8 +6,9 @@ BotName: minbo
 '''
 
 from py_expression_eval import Parser
-import telebot, os, aiml
-
+import telebot, os, aiml, sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 bot = telebot.TeleBot("TOKEN")
 parser = Parser()
