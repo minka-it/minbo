@@ -8,7 +8,6 @@ BotName: minbo
 from py_expression_eval import Parser
 import telebot, os, aiml
 
-
 bot = telebot.TeleBot("TOKEN")
 parser = Parser()
 
