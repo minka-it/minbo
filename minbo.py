@@ -177,7 +177,7 @@ def chat(message):
             bot.send_message(chat_id,"Tengo un bug en mi estomago!")
 
 @bot.message_handler(commands=['wiki','wikipedia'])
-def send_documentos(message):
+def wiki(message):
     chat_id = message.chat.id
     param = message.text.split(' ',1) #separa el comando de los parametros
     bot.send_message(chat_id, "Consultando en Wikipedia...")
