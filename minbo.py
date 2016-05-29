@@ -6,19 +6,22 @@ BotName: minbo
 '''
 
 from py_expression_eval import Parser
-import telebot, os, aiml, sys
+import telebot, os, aiml, sys, wikipedia
 reload(sys)
 sys.setdefaultencoding('utf8')
+
+#wikipedia set
+wikipedia.set_lang("es")
 
 bot = telebot.TeleBot("TOKEN")
 parser = Parser()
 
-# Cargar el kernel, setear valores y aprender conocimiento
+# aiml: Cargar el kernel, setear valores y aprender conocimiento
 kernel = aiml.Kernel()
 kernel.setBotPredicate('name', 'Minbo')
 kernel.setBotPredicate('nombre_bot', 'Minbo')
-kernel.setBotPredicate('master', 'Ramiro Martinez')
-kernel.setBotPredicate('botmaster', 'Ramiro')
+kernel.setBotPredicate('master', 'Minka')
+kernel.setBotPredicate('botmaster', 'Minka')
 kernel.setBotPredicate('ciudad', 'San Salvador de Jujuy')
 kernel.setBotPredicate('edad', '1')
 kernel.learn("aiml/sara/sara_srai_1.aiml")
@@ -172,5 +175,25 @@ def chat(message):
         except Exception, e:
             print e
             bot.send_message(chat_id,"Tengo un bug en mi estomago!")
+
+@bot.message_handler(commands=['wiki','wikipedia'])
+def send_documentos(message):
+    chat_id = message.chat.id
+    param = message.text.split(' ',1) #separa el comando de los parametros
+    bot.send_message(chat_id, "Consultando en Wikipedia...")
+    try:
+        wiki = wikipedia.page(param[1])
+        bot.send_message(chat_id, wiki.summary)
+        bot.send_message(chat_id, "Consulta mas en:\n"+wiki.url)
+    except wikipedia.exceptions.DisambiguationError as e:
+        bot.send_message(chat_id, "'"+param[1]+"'"+" puede referirse a:")
+        bot.send_message(chat_id, '\n'.join(e.options))
+    except wikipedia.exceptions.PageError as e:
+        bot.send_message(chat_id, "No se encontro ninguna pagina, intenta con otra consulta!")
+    except Exception, e:
+        print e
+        bot.send_message(chat_id,"Tengo un bug en mi estomago!")
+
+    
 
 bot.polling(none_stop=True)       # Iniciamos nuestro bot para que esté atento a los mensajes
