@@ -78,8 +78,13 @@ text_messages = {
         'Puedes hablar conmigo si estas aburrid@.\n'
         'Soy un Chaterbot basado en la base de conocimiento de SARA.\n'
         'Estoy implementado gracias a pyaiml.\n'
-        'Mi creador es Ramiro Martinez y la comunidad Minka-IT.\n'
+        'Mi creador es la comunidad Minka-IT.\n'
         'Proximamente mi creador me dotara de capacidad de aprendizaje en tiempo real.',
+
+    'help_wiki':
+        'Uso:\n'
+        '/wiki "Tu consulta"\n'
+        '/wikipedia "Tu consulta"\n',
 
     'wrong_chat':
         'Hubo un error'
@@ -180,19 +185,22 @@ def chat(message):
 def wiki(message):
     chat_id = message.chat.id
     param = message.text.split(' ',1) #separa el comando de los parametros
-    bot.send_message(chat_id, "Consultando en Wikipedia...")
-    try:
-        wiki = wikipedia.page(param[1])
-        bot.send_message(chat_id, wiki.summary)
-        bot.send_message(chat_id, "Consulta mas en:\n"+wiki.url)
-    except wikipedia.exceptions.DisambiguationError as e:
-        bot.send_message(chat_id, "'"+param[1]+"'"+" puede referirse a:")
-        bot.send_message(chat_id, '\n'.join(e.options))
-    except wikipedia.exceptions.PageError as e:
-        bot.send_message(chat_id, "No se encontro ninguna pagina, intenta con otra consulta!")
-    except Exception, e:
-        print e
-        bot.send_message(chat_id,"Tengo un bug en mi estomago!")
+    if len(param) == 1 or param[1]=="help":
+        bot.send_message(chat_id,text_messages['help_wiki'])
+    else:
+        bot.send_message(chat_id, "Consultando en Wikipedia...")
+        try:
+            wiki = wikipedia.page(param[1])
+            bot.send_message(chat_id, wiki.summary)
+            bot.send_message(chat_id, "Consulta mas en:\n"+wiki.url)
+        except wikipedia.exceptions.DisambiguationError as e:
+            bot.send_message(chat_id, "'"+param[1]+"'"+" puede referirse a:")
+            bot.send_message(chat_id, '\n'.join(e.options))
+        except wikipedia.exceptions.PageError as e:
+            bot.send_message(chat_id, "No se encontro ninguna pagina, intenta con otra consulta!")
+        except Exception, e:
+            print e
+            bot.send_message(chat_id,"Tengo un bug en mi estomago!")
 
     
 
