@@ -43,7 +43,7 @@ text_messages = {
         'Mi nombre es *minbo*,\n'
         'Soy el bot que te brindará información acerca de la comunidad Minka-IT.\n'
         'Estoy en etapa de desarrollo, no dudes en agregarme nuevas funcionalidades!\n'
-        'Mi código se encuentra en GitHub! repositorio temporal: https://github.com/jorgex9/minka-it.git',
+        'Mi código se encuentra en GitHub! repositorio temporal: git@github.com:minka-it/minbo.git',
 
     'help_calc':
         'Uso\n'
